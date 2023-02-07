@@ -24,7 +24,9 @@ if(!isset($_GET['type'])) {
 // Операции на вывод записей //
 
 if(preg_match_all("/^(list_cats)$/ui", $_GET['type'])){
+   
     $query = "SELECT `id`,  `first_name` FROM `cats`";
+   
     $res_query = mysqli_query($connection, $query);
     if(!$res_query){
         echo ajax_echo(
@@ -54,7 +56,9 @@ if(preg_match_all("/^(list_cats)$/ui", $_GET['type'])){
 }
 
 if(preg_match_all("/^(list_cat_info)$/ui", $_GET['type'])){
+   
     $query = "SELECT `id`, `species`, `price` FROM `cat_info`";
+    
     $res_query = mysqli_query($connection, $query);
     if(!$res_query){
         echo ajax_echo(
@@ -84,7 +88,11 @@ if(preg_match_all("/^(list_cat_info)$/ui", $_GET['type'])){
 }
 
 if(preg_match_all("/^(list_cat_ purchase)$/ui", $_GET['type'])){
-    $query = "SELECT `id`, `cat_info_id`, `cat_id` FROM `cat_ purchase`";
+
+    $query = "SELECT `cat_ purchase`.`id`, `cat_info`.`species`, `cats`.`first_name` FROM `cat_ purchase` 
+    INNER JOIN `cats` ON `cat_id`=`cats`.`id`
+    INNER JOIN `cat_info` ON `cat_info_id`=`cat_info`.`id` ";
+
     $res_query = mysqli_query($connection, $query);
 
     if(!$res_query){
@@ -97,7 +105,8 @@ if(preg_match_all("/^(list_cat_ purchase)$/ui", $_GET['type'])){
         );
         exit();
     }
-
+ 
+   
     $arr_list = array();
     $rows = mysqli_num_rows($res_query);
 
@@ -105,7 +114,7 @@ if(preg_match_all("/^(list_cat_ purchase)$/ui", $_GET['type'])){
         $row = mysqli_fetch_assoc($res_query);
         array_push($arr_list, $row);
     }
-
+   
     echo ajax_echo(
         "Список котов, которых привезли", 
         "Вывод списка поступивших котов", 
@@ -118,7 +127,8 @@ if(preg_match_all("/^(list_cat_ purchase)$/ui", $_GET['type'])){
 }
 
 if(preg_match_all("/^(list_comments)$/ui", $_GET['type'])){
-    $query = "SELECT `id`, `cat_info_id`, `cat_id`, `comment` FROM `comments`";
+    $query = "SELECT `comments`.`id`, `cats`.`first_name`, `comment` FROM `comments` 
+    INNER JOIN `cats` ON `cat_id`=`cats`.`id`";
     $res_query = mysqli_query($connection, $query);
 
     if(!$res_query){
